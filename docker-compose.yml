@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecomcreatives
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      # ── Required ───────────────────────────────────────────────
+      # Set your real Gemini API key here (or use a .env file)
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      # ── Optional ───────────────────────────────────────────────
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - NODE_ENV=production
+    volumes:
+      # Persist admin settings (API key, model, prompts) across restarts
+      - ecomcreatives_data:/app/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:3000/api/settings || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  ecomcreatives_data:
+    driver: local
