@@ -29,6 +29,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# VPS file-based settings storage (runtime data, not committed)
+/data/*.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
