@@ -95,7 +95,7 @@ export default function AdminLogin({ onLogin }: Props) {
         </form>
 
         <p className="text-xs text-gray-400 dark:text-gray-600 text-center mt-6">
-          Default password: <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">admin123</code>
+          Default password: <code className="bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">Admin@123</code>
           <br />
           Change it in Settings after signing in
         </p>
