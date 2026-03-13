@@ -36,7 +36,9 @@ RUN addgroup --system --gid 1001 nodejs && \
     adduser  --system --uid 1001 nextjs
 
 # Copy only what's needed to run the app
-COPY --from=builder /app/public      ./public
+# public/ may be empty but must exist — Next.js expects it
+RUN mkdir -p ./public
+COPY --from=builder /app/public/     ./public/
 COPY --from=builder /app/.next       ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
