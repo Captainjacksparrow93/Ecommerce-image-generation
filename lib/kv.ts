@@ -1,12 +1,9 @@
 import type { AppSettings } from "@/types";
+import { promises as fs } from "fs";
+import path from "path";
 
-// Lazy import to avoid issues when KV env vars are not set
-async function getRedis() {
-  const { Redis } = await import("@upstash/redis");
-  return Redis.fromEnv();
-}
-
-const SETTINGS_KEY = "app:settings";
+// File-based persistent storage for VPS hosting (no external Redis needed)
+const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
 
 const DEFAULT_SETTINGS: AppSettings = {
   geminiApiKey: process.env.GEMINI_API_KEY || "",
@@ -17,24 +14,29 @@ const DEFAULT_SETTINGS: AppSettings = {
   watermarkText: "",
 };
 
+async function ensureDataDir() {
+  const dir = path.dirname(SETTINGS_FILE);
+  await fs.mkdir(dir, { recursive: true });
+}
+
 export async function getSettings(): Promise<AppSettings> {
   try {
-    const redis = await getRedis();
-    const stored = await redis.get<Partial<AppSettings>>(SETTINGS_KEY);
-    if (!stored) return DEFAULT_SETTINGS;
+    await ensureDataDir();
+    const raw = await fs.readFile(SETTINGS_FILE, "utf-8");
+    const stored: Partial<AppSettings> = JSON.parse(raw);
 
     // Merge with defaults so new fields are always present
     return {
       ...DEFAULT_SETTINGS,
       ...stored,
-      // Always fall back to env var if KV key not set
+      // Always fall back to env var if file setting is empty
       geminiApiKey:
         stored.geminiApiKey || process.env.GEMINI_API_KEY || "",
       adminPassword:
         stored.adminPassword || process.env.ADMIN_PASSWORD || "admin123",
     };
   } catch {
-    // KV not configured — use env var fallback
+    // File doesn't exist or is invalid JSON — use env var defaults
     return DEFAULT_SETTINGS;
   }
 }
@@ -46,11 +48,15 @@ export async function updateSettings(
   const updated = { ...current, ...partial };
 
   try {
-    const redis = await getRedis();
-    await redis.set(SETTINGS_KEY, updated);
-  } catch {
-    // KV not available, settings won't persist across deploys
-    console.warn("KV not available — settings not persisted");
+    await ensureDataDir();
+    await fs.writeFile(
+      SETTINGS_FILE,
+      JSON.stringify(updated, null, 2),
+      "utf-8"
+    );
+  } catch (err) {
+    // Filesystem not writable — settings won't persist
+    console.warn("Failed to persist settings:", err);
   }
 
   return updated;

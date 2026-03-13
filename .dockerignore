@@ -1,0 +1,29 @@
+# Git
+.git
+.gitignore
+
+# Dependencies (rebuilt inside Docker)
+node_modules
+
+# Next.js build output (rebuilt inside Docker)
+.next
+out
+
+# Local env files (pass secrets via docker-compose environment: instead)
+.env*.local
+.env
+
+# Dev/test artifacts
+coverage
+*.log
+
+# OS files
+.DS_Store
+
+# VPS deployment files (not needed inside the container)
+nginx.conf
+deploy.sh
+ecosystem.config.js
+
+# Docs
+*.md
