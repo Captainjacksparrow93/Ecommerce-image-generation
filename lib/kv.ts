@@ -7,7 +7,7 @@ const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
 
 const DEFAULT_SETTINGS: AppSettings = {
   geminiApiKey: process.env.GEMINI_API_KEY || "",
-  adminPassword: process.env.ADMIN_PASSWORD || "admin123",
+  adminPassword: process.env.ADMIN_PASSWORD || "Admin@123",
   defaultModel: "imagen-3.0-generate-002",
   maxConcurrentGenerations: 3,
   customPromptPrefix: "",
@@ -33,7 +33,7 @@ export async function getSettings(): Promise<AppSettings> {
       geminiApiKey:
         stored.geminiApiKey || process.env.GEMINI_API_KEY || "",
       adminPassword:
-        stored.adminPassword || process.env.ADMIN_PASSWORD || "admin123",
+        stored.adminPassword || process.env.ADMIN_PASSWORD || "Admin@123",
     };
   } catch {
     // File doesn't exist or is invalid JSON — use env var defaults
