@@ -11,21 +11,15 @@ import {
   CheckCircle,
   Loader2,
   RefreshCw,
-  LogOut,
   Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AVAILABLE_MODELS } from "@/lib/gemini";
 import type { AppSettings } from "@/types";
 
-interface Props {
-  adminPassword: string;
-  onLogout: () => void;
-}
-
 type SaveState = "idle" | "saving" | "saved" | "error";
 
-export default function SettingsPanel({ adminPassword, onLogout }: Props) {
+export default function SettingsPanel() {
   const [settings, setSettings] = useState<Partial<AppSettings>>({});
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<SaveState>("idle");
@@ -66,10 +60,7 @@ export default function SettingsPanel({ adminPassword, onLogout }: Props) {
 
       const res = await fetch("/api/settings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-admin-password": adminPassword,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -122,13 +113,6 @@ export default function SettingsPanel({ adminPassword, onLogout }: Props) {
             title="Refresh settings"
           >
             <RefreshCw className="w-4 h-4" />
-          </button>
-          <button
-            onClick={onLogout}
-            className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-colors"
-          >
-            <LogOut className="w-4 h-4" />
-            Logout
           </button>
         </div>
       </div>
