@@ -13,13 +13,6 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const password = req.headers.get("x-admin-password");
-  const settings = await getSettings();
-
-  if (!password || password !== settings.adminPassword) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   let body: Partial<AppSettings>;
   try {
     body = await req.json();
