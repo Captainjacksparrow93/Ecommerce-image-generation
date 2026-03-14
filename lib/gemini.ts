@@ -3,7 +3,7 @@ import type { ImageFormat, ProductDetails } from "@/types";
 import { buildGenerationPrompt } from "./prompts";
 
 const IMAGEN_MODEL = "imagen-3.0-generate-002";
-const GEMINI_FLASH_MODEL = "gemini-2.5-flash-image";
+const GEMINI_FLASH_MODEL = "gemini-3.1-flash-image-preview";
 
 export async function generateImage(
   apiKey: string,
@@ -168,8 +168,8 @@ function getNearestAspectRatio(width: number, height: number): string {
 export const AVAILABLE_MODELS = [
   { id: "imagen-3.0-generate-002", label: "Imagen 3 (Best Quality)" },
   {
-    id: "gemini-2.5-flash-image",
-    label: "Gemini 2.5 Flash Image (Fast)",
+    id: "gemini-3.1-flash-image-preview",
+    label: "Nano Banana 2 (Gemini 3.1 Flash Image)",
   },
 ];
 

@@ -1,6 +1,9 @@
 import type { AppSettings } from "@/types";
+import { AVAILABLE_MODELS } from "./gemini";
 import { promises as fs } from "fs";
 import path from "path";
+
+const VALID_MODEL_IDS = new Set(AVAILABLE_MODELS.map((m) => m.id));
 
 // File-based persistent storage for VPS hosting (no external Redis needed)
 const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
@@ -34,6 +37,11 @@ export async function getSettings(): Promise<AppSettings> {
         stored.geminiApiKey || process.env.GEMINI_API_KEY || "",
       adminPassword:
         stored.adminPassword || process.env.ADMIN_PASSWORD || "Admin@123",
+      // Reset to default if the stored model is no longer valid
+      defaultModel:
+        stored.defaultModel && VALID_MODEL_IDS.has(stored.defaultModel)
+          ? stored.defaultModel
+          : DEFAULT_SETTINGS.defaultModel,
     };
   } catch {
     // File doesn't exist or is invalid JSON — use env var defaults
